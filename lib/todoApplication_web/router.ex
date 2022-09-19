@@ -18,6 +18,14 @@ defmodule TodoApplicationWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    post "/todo", PageController, :save
+
+    post "/update", PageController, :update
+
+    get "/todo", PageController, :get
+
+   post "/delete", PageController, :delete
   end
 
   # Other scopes may use custom stacks.

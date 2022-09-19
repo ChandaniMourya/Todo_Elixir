@@ -5,8 +5,97 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Todo Application</title>
+  <style>
+      .hide{
+      display:none;
+    }
+    .show{
+      display:block;
+    }
+  </style>
 </head>
 <body>
-  
+  <div class="container">
+      <div class="mt-4 title">
+        <h1 class="text-center">Todo List</h1>
+      </div>
+      <!-- form container -->
+      <form class="form hide my-4" id="addTaskForm">
+        <%# <div class="form-group mb-3" > %>
+          <%= form_for @conn, Routes.page_path(@conn, :save), fn f -> %>
+                <div class="form-group">
+                    <label class="my-2">Title</label>
+                    <%= text_input f, :title, id: "input",class: "form-control", placeholder: "Enter the title"%>
+                  </div>
+                  <div class="form-group">
+                    <label  class="my-2">Description</label>
+                    <%= text_input f, :desc, class: "form-control", placeholder: "Enter the Description"%>
+                  </div>
+                  <div class="form-group">
+                    <label class="my-2">Priority</label>
+                    <%= text_input f, :priority, class: "form-control", placeholder: "Enter the Priority"%>
+                  </div>
+                <%= submit "Submit", class: " my-2 button btn btn-success" %>
+          <% end %>
+        <%# </div> %>
+      </form>
+
+      <!-- task container -->
+      <div class="card w-55 align-center">
+          <div class="card-header p-3">
+            <h5 class="mb-0">
+
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-list-check" viewBox="0 0 16 16"> -->
+  <!-- <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3.854 2.146a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 3.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708L2 7.293l1.146-1.147a.5.5 0 0 1 .708 0zm0 4a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/> -->
+<!-- </svg> -->
+            Task List</h5>
+          </div>
+          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+
+            <table class="table mb-0">
+              <thead>
+                <tr>
+                  <th scope="col">Task Title</th>
+                  <th scope="col">Task Description</th>
+                  <th scope="col">Priority</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="fw-normal">
+                  <td class="align-middle">
+                    <span>Call Sam For payments</span>
+                  </td>
+                  <td class="align-middle">
+                    <span>Call Sam For payments</span>
+                  </td>
+                  <td class="align-middle">
+
+                    <h1 class="badge bg-success">Low</h1>
+                    <h1 class="badge bg-warning">Middle</h1>
+                    <h1 class="badge bg-danger">High</h1>
+
+                  </td>
+                  <td class="align-middle">
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+          <div class="card-footer text-end p-3">
+            <button class="btn btn-primary" id="addTask">Add Task</button>
+          </div>
+        </div>
+  </div>
+  <script>
+    let addTask = document.getElementById("addTask");
+    let addTaskForm = document.getElementById("addTaskForm")
+    addTask.addEventListener('click',()=>{
+        addTaskForm.classList.toggle("show");
+
+    })
+  </script>
 </body>
 </html>
