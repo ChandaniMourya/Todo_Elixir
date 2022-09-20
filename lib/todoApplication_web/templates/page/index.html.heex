@@ -12,6 +12,9 @@
     .show{
       display:block;
     }
+    tr{
+      text-align:center;
+    }
   </style>
 </head>
 <body>
@@ -20,28 +23,35 @@
         <h1 class="text-center">Todo List</h1>
       </div>
       <!-- form container -->
-      <form class="form hide my-4" id="addTaskForm">
-        <%# <div class="form-group mb-3" > %>
-          <%= form_for @conn, Routes.page_path(@conn, :save), fn f -> %>
+          <%= form_for @conn, Routes.page_path(@conn, :save),[class: "form hide my-4",id: "addTaskForm"], fn f -> %>
+              <div class="form-group mb-3" >
                 <div class="form-group">
                     <label class="my-2">Title</label>
-                    <%= text_input f, :title, id: "input",class: "form-control", placeholder: "Enter the title"%>
+                    <%= text_input f, :title, class: "form-control", id: "titleinput", placeholder: "Enter the title"%>
                   </div>
                   <div class="form-group">
                     <label  class="my-2">Description</label>
-                    <%= text_input f, :desc, class: "form-control", placeholder: "Enter the Description"%>
+                    <%= text_input f, :description, class: "form-control",id: "descriptioninput", placeholder: "Enter the Description"%>
                   </div>
                   <div class="form-group">
                     <label class="my-2">Priority</label>
-                    <%= text_input f, :priority, class: "form-control", placeholder: "Enter the Priority"%>
+                    <%= text_input f, :priority, class: "form-control",id: "priorityinput", placeholder: "Enter the Priority"%>
                   </div>
-                <%= submit "Submit", class: " my-2 button btn btn-success" %>
+                <%= submit "Submit",id: "submitForm", class: " my-2 button btn btn-success" %>
+              </div>
           <% end %>
-        <%# </div> %>
+  <div class="hide " id="form" >
+      <form action="/update"  method="POST">
+          <input type="hidden" name="id" id="id" >
+          <label>Title</label>
+          <input type="text"  name="title" id="titleupdate" class="form-control mb-4" placeholder="Enter the title">
+          <label>Description</label>
+          <input type="text"  name="description" id="descriptionupdate" class="form-control mb-4" placeholder="Enter the description">
+          <input type="submit" value="done" class="btn btn-primary">
       </form>
-
+  </div>
       <!-- task container -->
-      <div class="card w-55 align-center">
+      <div class="card w-55 align-center" style="margin:0 auto; width:55vw">
           <div class="card-header p-3">
             <h5 class="mb-0">
 
@@ -50,7 +60,7 @@
 </svg>
             Task List</h5>
           </div>
-          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px">
+          <div class="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height:400px">
 
             <table class="table mb-0">
               <thead>
@@ -62,45 +72,78 @@
                 </tr>
               </thead>
               <tbody>
+                    <%= for %{description: desc, title: title,priority: priority, id: id} <- @get do %>
                 <tr class="fw-normal">
                   <td class="align-middle">
-                    <span>Call Sam For payments</span>
+                    <span><%=title%></span>
                   </td>
+
                   <td class="align-middle">
-                    <span>Call Sam For payments</span>
+                    <span><%=desc%></span>
                   </td>
+
                   <td class="align-middle">
-
-                    <h1 class="badge bg-success">Low</h1>
-                    <h1 class="badge bg-warning">Middle</h1>
-                    <h1 class="badge bg-danger">High</h1>
-
+<!--<%= case priority == "high" do %>
+    <% true  when priority == "high"  -> %>  <h1 class="badge bg-danger"><%= priority %></h1>
+    <% false  when priority == "medium" -> %> <h1 class="badge bg-warning"><%= priority %></h1>
+<% _ -> %><h1 class="badge bg-success"><%= priority %></h1>
+<% end %>-->
+<%# <%= p = String.downcase(priority) %>
+                    <%= case String.downcase(priority)  do %>
+                      <% "high"-> %>  <h1 class="badge bg-danger"><%= priority %></h1>
+                      <% "medium" -> %> <h1 class="badge bg-warning"><%= priority %></h1>
+                      <% _ -> %><h1 class="badge bg-success"><%= priority %></h1>
+                    <% end %>
                   </td>
-                  <td class="align-middle">
+                  <td class="align-middle d-flex justify-content-around">
+                     <%= form_for @conn, Routes.page_path(@conn, :delete),[method: :POST], fn _f -> %>
+                                <input type="hidden" name="id" value={id}>
+                                <input type="submit" class="btn btn-danger" value="delete">
+                        <% end %>
 
-                   <a href="#!" data-mdb-toggle="tooltip" class="m-3 ml-1" title="Done">
-                   <%= Bootstrap.Icons.pen(class: "text-success", width: 25, height: 25) %></a>
-                   <a href="#!" data-mdb-toggle="tooltip" title="Remove">
-                    <%= Bootstrap.Icons.trash(class: "text-danger", width: 25, height: 25) %>
-                  </a>
+                               <form action="/update" method="POST" id="Edit_old">
+                                    <input type="hidden" name="id" value={id}>
+                                    <input type="hidden" name="title" value={title}>
+                                    <input type="hidden" name="description" value={desc}>
+                                    <input type="button" class="btn btn-primary" id={inspect(id)} value="edit" onclick="edit(this)">
+                                </form>
                   </td>
                 </tr>
-              </tbody>
+              <% end %>
+            </tbody>
             </table>
 
           </div>
           <div class="card-footer text-end p-3">
+            <%# <button onclick="window.location.href='/todo'" >Read</button> %>
             <button class="btn btn-primary" id="addTask">Add Task</button>
           </div>
         </div>
   </div>
   <script>
-    let addTask = document.getElementById("addTask");
-    let addTaskForm = document.getElementById("addTaskForm")
-    addTask.addEventListener('click',()=>{
-        addTaskForm.classList.toggle("show");
+      let addTask = document.getElementById("addTask");
+      let addTaskForm = document.getElementById("addTaskForm")
+      let submitForm = document.getElementById("submitForm")
+      let titleInput = document.getElementById("titleinput");
+      let descriptionInput = document.getElementById("descriptioninput");
 
-    })
+      let priorityInput = document.getElementById("priorityinput");
+
+      let updateform = document.getElementById("form")
+      let id = document.getElementById("id");
+      let titleupdate = document.getElementById("titleupdate").value;
+
+      addTask.addEventListener('click',()=>{
+        addTaskForm.classList.toggle("show");
+        updateform.classList.remove("show");
+
+      })
+      function edit(el){
+        id.value =el.id;
+        titleupdate.value =el.title;
+        addTaskForm.classList.remove("show");
+        updateform.classList.toggle("show");
+      }
   </script>
 </body>
 </html>
