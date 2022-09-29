@@ -100,11 +100,10 @@
                                 <input type="hidden" name="id" value={id}>
                                 <input type="submit" class="btn btn-danger" value="delete">
                         <% end %>
-
                                <form action="/update" method="POST" id="Edit_old">
                                     <input type="hidden" name="id" value={id}>
-                                    <input type="hidden" name="title" value={title}>
-                                    <input type="hidden" name="description" value={desc}>
+                                    <input id="random_id" type="hidden" name="title" value={title}>
+                                    <input id="description" type="hidden" name="description" value={desc}>
                                     <input type="button" class="btn btn-primary" id={inspect(id)} value="edit" onclick="edit(this)">
                                 </form>
                   </td>
@@ -131,16 +130,18 @@
 
       let updateform = document.getElementById("form")
       let id = document.getElementById("id");
-      let titleupdate = document.getElementById("titleupdate").value;
-
-      addTask.addEventListener('click',()=>{
+      let titleupdate = document.getElementById("titleupdate");
+      let descriptionupdate = document.getElementById("descriptionupdate")
+            addTask.addEventListener('click',()=>{
         addTaskForm.classList.toggle("show");
         updateform.classList.remove("show");
 
       })
       function edit(el){
         id.value =el.id;
-        titleupdate.value =el.title;
+        titleupdate.value =document.getElementById("random_id").value ;
+        descriptionupdate.value =document.getElementById("description").value ;
+
         addTaskForm.classList.remove("show");
         updateform.classList.toggle("show");
       }

@@ -1,6 +1,6 @@
 defmodule TodoApplicationWeb.PageController do
   use TodoApplicationWeb, :controller
-alias TodoApplication.Todos.Todo
+  alias TodoApplication.Todos.Todo
   alias TodoApplication.Repo
   import Ecto.Query, only: [from: 2]
 
@@ -12,7 +12,8 @@ alias TodoApplication.Todos.Todo
     # IO.inspect("###########/######SAVE###################")
     # IO.inspect(title)
     if is_number(title) or is_number(desc) or is_number(priority) do
-      send_resp(conn, 400, Jason.encode!(%{"message" => "Data is not inserted"}))
+      put_flash(conn, :error, "Data is not inserted") |> redirect(to: "/")
+      # send_resp(conn, 400, Jason.encode!(%{"message" => "Data is not inserted"}))
     else
       Repo.insert(%Todo{title: title, description: desc, priority: priority})
       put_flash(conn, :info, "Data is inserted") |> redirect(to: "/")
@@ -34,9 +35,9 @@ alias TodoApplication.Todos.Todo
     updatevalue = updated_value["title"]
     updatedescriptionvalue = updated_value["description"]
     id = updated_value["id"]
-      IO.inspect(updatevalue);
-      IO.inspect(id);
-      IO.inspect(updatedescriptionvalue);
+      # IO.inspect(updatevalue);
+      # IO.inspect(id);
+      # IO.inspect(updatedescriptionvalue);
 
     # Create a query
     query =
@@ -52,7 +53,7 @@ alias TodoApplication.Todos.Todo
       true ->
         case Repo.update(change) do
           {:ok, _} -> put_flash(conn, :info, "updated") |> redirect(to: "/")
-          {:error, _} -> put_flash(conn, :info, "title not found") |> redirect(to: "/")
+          {:error, _} -> put_flash(conn, :error, "title not found") |> redirect(to: "/")
         end
       _ ->
       put_flash(conn, :info, "command not found") |> redirect(to: "/")
@@ -73,10 +74,10 @@ alias TodoApplication.Todos.Todo
       if eledelete == querydele do
         put_flash(conn, :info, "Row is delete") |> redirect(to: "/")
       else
-        put_flash(conn, :info, "mismatch the data") |> redirect(to: "/")
+        put_flash(conn, :error , "mismatch the data") |> redirect(to: "/")
       end
     else
-      put_flash(conn, :info, "Data is not in table ") |> redirect(to: "/")
+      put_flash(conn, :error, "Data is not in table ") |> redirect(to: "/")
     end
   end
 
